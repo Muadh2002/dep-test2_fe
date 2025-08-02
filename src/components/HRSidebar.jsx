@@ -106,7 +106,7 @@ const menuItems = [
   { text: "User Management", icon: <PeopleIcon />, path: "/hr/user-management", notification: 0 },
   { text: "Goal Review", icon: <EventNoteIcon />, path: "/hr/goalReviews", notification: 0 },
   { text: "Task Review", icon: <RecyclingIcon />, path: "/hr/taskReviews", notification: 0 },
-  { text: "Reports", icon: <BarChartIcon />, path: "/hr/reports", notification: 0 },
+  //{ text: "Reports", icon: <BarChartIcon />, path: "/hr/reports", notification: 0 },
   { text: "Settings", icon: <SettingsIcon />, path: "/profile/profile", notification: 0 },
 ];
 
