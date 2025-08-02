@@ -1,21 +1,79 @@
-import React from 'react';
-import { AppBar, Toolbar, IconButton, Badge, InputBase, Box, Button, Avatar } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Badge,
+  InputBase,
+  Box,
+  Button,
+  Avatar,Typography
+} from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import SearchIcon from '@mui/icons-material/Search';
-import { useRouter } from 'next/router'; // For redirecting after sign-out
-import { signOut } from 'next-auth/react'; // Import NextAuth's signOut function
+import { useRouter } from 'next/router';
+import { motion } from 'framer-motion';
+import { signOut } from 'next-auth/react';
+
+import { useNotificationCount } from '../hooks/useNotifications';
+import HRNotificationPage from '../pages/hr/notification';
 
 const Navbar = () => {
-  const router = useRouter(); // Initialize router to handle redirection after sign-out
-  return (
-    <AppBar position="sticky" sx={{ backgroundColor: '#153B60' }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '0 20px' }}>
-        {/* Logo Section aligned to the left */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar src="/images/logo.png" alt="Logo" style={{ height: 60, width: 60 }} />
-        </Box>
+  const router = useRouter();
+  const { unreadCount } = useNotificationCount();
+  const [notificationAnchor, setNotificationAnchor] = useState(null);
 
-        {/* Right-Aligned Elements (Search Bar, Notifications, Sign Out) */}
+  const handleNotificationClick = (event) => {
+    setNotificationAnchor(event.currentTarget);
+  };
+
+  const handleCloseNotification = () => {
+    setNotificationAnchor(null);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut({ redirect: false }); // silent sign out
+      router.push('/auth/signin'); // redirect manually
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    }
+  };
+
+  return (
+    <AppBar position="sticky" sx={{ background: 'linear-gradient(45deg, #0c4672, #00bcd4)', }}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '0 20px' }}>
+        {/* Logo Section */}
+        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+                        <Avatar
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            background: 'linear-gradient(45deg, #0c4672, #00bcd4)',
+                            mr: 2,
+                            borderRadius: 3,
+                            fontSize: '1.5rem',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          R
+                        </Avatar>
+                        <Typography
+                          variant="h4"
+                          component="div"
+                          sx={{
+                            fontWeight: 'bold',
+                            background: 'linear-gradient(45deg, #ffffff, #00bcd4)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                          }}
+                        >
+                          RevX
+                        </Typography>
+                      </Box>
+
+        {/* Right Section */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {/* Search Bar */}
           <Box sx={{
@@ -34,15 +92,49 @@ const Navbar = () => {
             />
           </Box>
 
-          {/* Notification Icon with Badge */}
-          <IconButton color="inherit" sx={{ marginRight: 2 }}>
-            <Badge badgeContent={3} color="error">
+          {/* Notification Icon */}
+          <IconButton
+            color="inherit"
+            sx={{ marginRight: 2 }}
+            onClick={handleNotificationClick}
+            id="notification-button"
+          >
+            <Badge badgeContent={unreadCount} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
 
+          {/* Notification Popup */}
+          <HRNotificationPage
+            isPopup={true}
+            anchorEl={notificationAnchor}
+            onClose={handleCloseNotification}
+          />
+
           {/* Sign Out Button */}
-          <Button color="inherit" sx={{ color: 'white' }} onClick={() => router.push('/auth/signout')}>
+          <Button
+            component={motion.button}
+            whileHover={{
+              scale: 1.05,
+              backgroundColor: 'rgba(255,255,255,0.2)'
+            }}
+            whileTap={{ scale: 0.95 }}
+            color="inherit"
+            startIcon={<PowerSettingsNewIcon />}
+            onClick={handleSignOut}
+            sx={{
+              px: 2,
+              py: 1,
+              borderRadius: '8px',
+              fontWeight: 600,
+              letterSpacing: '0.5px',
+              textTransform: 'none',
+              display: { xs: 'none', sm: 'flex' },
+              '& .MuiButton-startIcon': {
+                marginRight: '6px'
+              }
+            }}
+          >
             Sign Out
           </Button>
         </Box>
