@@ -98,7 +98,7 @@ const SignIn = () => {
     setResetLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5001/api/auth/request-reset", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/request-reset`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +140,7 @@ const SignIn = () => {
     setResetLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5001/api/auth/reset-password", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/reset-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
